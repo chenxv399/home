@@ -52,28 +52,13 @@ export default ({ mode }) =>
           background_color: "#424242",
           icons: [
             {
-              src: "/images/icon/48.png",
-              sizes: "48x48",
+              src: "/images/icon/32.png",
+              sizes: "32x32",
               type: "image/png",
             },
             {
-              src: "/images/icon/72.png",
-              sizes: "72x72",
-              type: "image/png",
-            },
-            {
-              src: "/images/icon/96.png",
-              sizes: "96x96",
-              type: "image/png",
-            },
-            {
-              src: "/images/icon/128.png",
-              sizes: "128x128",
-              type: "image/png",
-            },
-            {
-              src: "/images/icon/144.png",
-              sizes: "144x144",
+              src: "/images/icon/180.png",
+              sizes: "180x180",
               type: "image/png",
             },
             {
