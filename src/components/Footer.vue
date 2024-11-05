@@ -13,7 +13,7 @@
           {{ fullYear }}
           <a :href="siteUrl">{{ siteAuthor }}</a>
         </span>
-        <!-- 以下信息请不要修改哦 -->
+        <!-- 版权信息 -->
         <span class="hidden">
           &amp;&nbsp;Powered&nbsp;by
           <a href="https://github.com/imsyy/home" target="_blank">
@@ -23,7 +23,7 @@
         <!-- 站点备案 -->
         <span>
           &amp;
-          <a v-if="siteIcp" href="https://icp.gov.moe" target="_blank">
+          <a v-if="siteIcp" href="https://beian.miit.gov.cn" target="_blank">
             {{ siteIcp }}
           </a>
         </span>
