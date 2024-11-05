@@ -5,7 +5,7 @@ name: Build Edit
 on:
   push:
     branches:
-      - Edit
+      - prod
 
 jobs:
   release:
