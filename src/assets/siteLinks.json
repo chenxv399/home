@@ -7,17 +7,22 @@
   {
     "icon": "Brain",
     "name": "UtopiAI",
+    "link": "https://api.ai.utopias.site/"
+  },
+  {
+    "icon": "Robot",
+    "name": "UtopiAI(FastGPT)",
     "link": "https://ai.utopias.site/"
   },
   {
-    "icon": "Compass",
-    "name": "起始页",
-    "link": "https://nav.utopias.site/"
+    "icon": "CodeBranch",
+    "name": "Utogits",
+    "link": "https://code.utopias.site/"
   },
   {
     "icon": "Server",
     "name": "NAS控制台",
-    "link": "https://home.utopias.site/"
+    "link": "https://my.hiksemi.cn"
   },
   {
     "icon": "LaptopCode",

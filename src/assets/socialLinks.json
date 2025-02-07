@@ -2,7 +2,7 @@
   {
     "name": "Github",
     "icon": "/images/icon/github.png",
-    "tip": "去 Github 看看",
+    "tip": "打不开 ~",
     "url": "https://github.com/chenxv399"
   },
   {
@@ -13,15 +13,15 @@
   },
   {
     "name": "微信公众号",
-    "icon": "/images/icon/wechat.png",
+    "icon": "/images/icon/Weixin.svg",
     "tip": "关注一下呗 ~",
-    "url": "https://axt01pjjfwgo.objectstorage.ap-chuncheon-1.oci.customer-oci.com/p/zzuXDQQtXcaQloJFrZxx2eqiIej8Gepv648flwEeL3NW1i9jc1ArG5L1Ifp55Dud/n/axt01pjjfwgo/b/bucket-pic/o/2024/09/wechatteam.png"
+    "url": "/images/icon/weixinchannel.png"
   },
   {
     "name": "Email",
     "icon": "/images/icon/email.png",
     "tip": "来封 Email ~",
-    "url": "mailto:support@utopias.site"
+    "url": "mailto:chenxv399@hotmail.com"
   },
   {
     "name": "Telegram",
