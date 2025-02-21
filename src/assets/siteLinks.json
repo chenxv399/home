@@ -11,7 +11,7 @@
   },
   {
     "icon": "Robot",
-    "name": "UtopiAI(FastGPT)",
+    "name": "FastGPT",
     "link": "https://ai.utopias.site/"
   },
   {
@@ -21,8 +21,13 @@
   },
   {
     "icon": "Server",
-    "name": "NAS控制台",
+    "name": "NAS网盘",
     "link": "https://my.hiksemi.cn"
+  },
+  {
+    "icon": "CloudDownloadAlt",
+    "name": "文件传送",
+    "link": "https://filebox.utopias.site/"
   },
   {
     "icon": "LaptopCode",
