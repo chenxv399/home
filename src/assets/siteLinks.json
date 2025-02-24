@@ -10,9 +10,9 @@
     "link": "https://api.ai.utopias.site/"
   },
   {
-    "icon": "Robot",
-    "name": "FastGPT",
-    "link": "https://ai.utopias.site/"
+    "icon": "Music",
+    "name": "音乐库",
+    "link": "https://music.utopias.site/"
   },
   {
     "icon": "CodeBranch",
@@ -28,6 +28,11 @@
     "icon": "CloudDownloadAlt",
     "name": "文件传送",
     "link": "https://filebox.utopias.site/"
+  },
+  {
+    "icon": "Robot",
+    "name": "FastGPT",
+    "link": "https://ai.utopias.site/"
   },
   {
     "icon": "LaptopCode",
