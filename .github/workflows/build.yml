@@ -42,10 +42,10 @@ jobs:
           VITE_WEATHERAPI_KEY="${{ secrets.VITE_WEATHERAPI_KEY }}"
           VITE_SITE_START="${{ vars.VITE_SITE_START }}"
           VITE_SITE_ICP="${{ vars.VITE_SITE_ICP }}"
-          VITE_SONG_API="${{ vars.VITE_SONG_API ?? '' }}"
-          VITE_SONG_SERVER="${{ vars.VITE_SONG_SERVER ?? '' }}"
-          VITE_SONG_TYPE="${{ vars.VITE_SONG_TYPE ?? '' }}"
-          VITE_SONG_ID="${{ vars.VITE_SONG_ID ?? '' }}"
+          VITE_SONG_API="${{ vars.VITE_SONG_API || '' }}"
+          VITE_SONG_SERVER="${{ vars.VITE_SONG_SERVER || '' }}"
+          VITE_SONG_TYPE="${{ vars.VITE_SONG_TYPE || '' }}"
+          VITE_SONG_ID="${{ vars.VITE_SONG_ID || '' }}"
           "@
           Set-Content -Path .env -Value $envContent
       # 安装项目依赖
