@@ -53,12 +53,6 @@ export const getHitokoto = async () => {
  * 天气
  */
 
-// 获取高德地理位置信息
-export const getAdcode = async (key) => {
-  const res = await fetch(`https://restapi.amap.com/v3/ip?key=${key}`);
-  return await res.json();
-};
-
 // 获取高德地理天气信息
 export const getWeather = async (key, city) => {
   const res = await fetch(
@@ -67,9 +61,18 @@ export const getWeather = async (key, city) => {
   return await res.json();
 };
 
-// 获取教书先生天气 API
-// https://api.oioweb.cn/doc/weather/GetWeather
-export const getOtherWeather = async () => {
-  const res = await fetch("https://api.oioweb.cn/api/weather/GetWeather");
+// 获取高德逆地理编码
+export const getAdcodefromAmap = async (key, jingdu, weidu) => {
+  const res = await fetch(
+    `https://restapi.amap.com/v3/geocode/regeo?key=${key}&location=${jingdu},${weidu}`,
+  );
   return await res.json();
 };
+
+// 获取weatherapi.com天气和地理信息
+export const getWeatherfromWeatherapi = async (key) => {
+  const res = await fetch(
+    `http://api.weatherapi.com/v1/current.json?key=${key}&q=auto:ip`,
+  );
+  return await res.json();
+}

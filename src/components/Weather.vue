@@ -4,13 +4,9 @@
     <span>{{ weatherData.weather.weather }}&nbsp;</span>
     <span>{{ weatherData.weather.temperature }}℃</span>
     <span class="sm-hidden">
-      &nbsp;{{
-        weatherData.weather.winddirection?.endsWith("风")
-          ? weatherData.weather.winddirection
-          : weatherData.weather.winddirection + "风"
-      }}&nbsp;
+      &nbsp;{{ weatherData.weather.winddirection }}&nbsp;
     </span>
-    <span class="sm-hidden">{{ weatherData.weather.windpower }}&nbsp;级</span>
+    <span class="sm-hidden">{{ weatherData.weather.windpower }}</span>
   </div>
   <div class="weather" v-else>
     <span>天气数据获取失败</span>
@@ -18,11 +14,12 @@
 </template>
 
 <script setup>
-import { getAdcode, getWeather, getOtherWeather } from "@/api";
+import { getWeather, getWeatherfromWeatherapi, getAdcodefromAmap } from "@/api";
 import { Error } from "@icon-park/vue-next";
 
 // 高德开发者 Key
 const mainKey = import.meta.env.VITE_WEATHER_KEY;
+const WeatherapiKey = import.meta.env.VITE_WEATHERAPI_KEY;
 
 // 天气数据
 const weatherData = reactive({
@@ -38,55 +35,45 @@ const weatherData = reactive({
   },
 });
 
-// 取出天气平均值
-const getTemperature = (min, max) => {
-  try {
-    // 计算平均值并四舍五入
-    const average = (Number(min) + Number(max)) / 2;
-    return Math.round(average);
-  } catch (error) {
-    console.error("计算温度出现错误：", error);
-    return "NaN";
-  }
-};
-
 // 获取天气数据
 const getWeatherData = async () => {
   try {
-    // 获取地理位置信息
-    if (!mainKey) {
-      console.log("未配置，使用备用天气接口");
-      const result = await getOtherWeather();
-      console.log(result);
-      const data = result.result;
-      weatherData.adCode = {
-        city: data.city.City || "未知地区",
-        // adcode: data.city.cityId,
-      };
-      weatherData.weather = {
-        weather: data.condition.day_weather,
-        temperature: getTemperature(data.condition.min_degree, data.condition.max_degree),
-        winddirection: data.condition.day_wind_direction,
-        windpower: data.condition.day_wind_power,
-      };
-    } else {
-      // 获取 Adcode
-      const adCode = await getAdcode(mainKey);
+    // 使用weatherapi获取天气和地理信息
+    const WeatherapiResult = await getWeatherfromWeatherapi(WeatherapiKey);
+    if (WeatherapiResult.location.country == "China"){
+      //使用高德逆地理编码获取Adcode
+      const jingdu = WeatherapiResult.location.lon;
+      const weidu = WeatherapiResult.location.lat;
+      const adCode = await getAdcodefromAmap(mainkey,jingdu,weidu);
       console.log(adCode);
       if (adCode.infocode !== "10000") {
         throw "地区查询失败";
       }
       weatherData.adCode = {
-        city: adCode.city,
-        adcode: adCode.adcode,
+        city: adCode.regeocode.addressComponent.city,
+        adcode: adCode.regeocode.addressComponent.adcode,
       };
-      // 获取天气信息
+      // 获取高德天气信息
       const result = await getWeather(mainKey, weatherData.adCode.adcode);
       weatherData.weather = {
         weather: result.lives[0].weather,
         temperature: result.lives[0].temperature,
-        winddirection: result.lives[0].winddirection,
-        windpower: result.lives[0].windpower,
+        winddirection: result.lives[0].winddirection?.endsWith("风")
+          ? result.lives[0].winddirection
+          : result.lives[0].winddirection + "风",
+        windpower: result.lives[0].windpower + "级",
+      }; 
+    }else{
+      weatherData.adCode = {
+        city: WeatherapiResult.location.name,
+        adcode: 000000,
+      };
+
+      weatherData.weather = {
+        weather: WeatherapiResult.current.condition.text,
+        temperature: WeatherapiResult.current.temp_c,
+        winddirection: WeatherapiResult.current.wind_dir,
+        windpower: WeatherapiResult.current.wind_kph + "km/h",
       };
     }
   } catch (error) {
