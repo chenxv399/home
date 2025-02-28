@@ -66,7 +66,7 @@ const getWeatherData = async () => {
     }else{
       weatherData.adCode = {
         city: WeatherapiResult.location.name,
-        adcode: 000000,
+        adcode: null,
       };
 
       weatherData.weather = {

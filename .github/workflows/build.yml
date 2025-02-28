@@ -1,6 +1,6 @@
 # Dev 分支推送部署预览
 ## 仅部署 Win 端
-name: Build Edit
+name: Prod CI/CD
 
 on:
   push:
@@ -11,6 +11,7 @@ jobs:
   release:
     name: Build Website
     runs-on: windows-latest
+    environment: Prod
 
     steps:
       # 检出 Git 仓库
@@ -21,14 +22,32 @@ jobs:
         uses: actions/setup-node@v4.0.0
         with:
           node-version: "18.x"
-      # 复制环境变量文件
-      - name: Copy .env.example
+      # 从 GitHub Secrets 和 Variables 生成 .env 文件
+      - name: Generate .env file
         run: |
-          if (-not (Test-Path .env)) {
-            Copy-Item .env.example .env
-          } else {
-            Write-Host ".env file already exists. Skipping the copy step."
-          }
+          $envContent = @"
+          VITE_SITE_NAME="${{ vars.VITE_SITE_NAME }}"
+          VITE_SITE_AUTHOR="${{ vars.VITE_SITE_AUTHOR }}"
+          VITE_SITE_KEYWORDS="${{ vars.VITE_SITE_KEYWORDS }}"
+          VITE_SITE_DES="${{ vars.VITE_SITE_DES }}"
+          VITE_SITE_URL="${{ vars.VITE_SITE_URL }}"
+          VITE_SITE_LOGO="${{ vars.VITE_SITE_LOGO }}"
+          VITE_SITE_MAIN_LOGO="${{ vars.VITE_SITE_MAIN_LOGO }}"
+          VITE_SITE_APPLE_LOGO="${{ vars.VITE_SITE_APPLE_LOGO }}"
+          VITE_DESC_HELLO="${{ vars.VITE_DESC_HELLO }}"
+          VITE_DESC_TEXT="${{ vars.VITE_DESC_TEXT }}"
+          VITE_DESC_HELLO_OTHER="${{ vars.VITE_DESC_HELLO_OTHER }}"
+          VITE_DESC_TEXT_OTHER="${{ vars.VITE_DESC_TEXT_OTHER }}"
+          VITE_WEATHER_KEY="${{ secrets.VITE_WEATHER_KEY }}"
+          VITE_WEATHERAPI_KEY="${{ secrets.VITE_WEATHERAPI_KEY }}"
+          VITE_SITE_START="${{ vars.VITE_SITE_START }}"
+          VITE_SITE_ICP="${{ vars.VITE_SITE_ICP }}"
+          VITE_SONG_API="${{ vars.VITE_SONG_API ?? '' }}"
+          VITE_SONG_SERVER="${{ vars.VITE_SONG_SERVER ?? '' }}"
+          VITE_SONG_TYPE="${{ vars.VITE_SONG_TYPE ?? '' }}"
+          VITE_SONG_ID="${{ vars.VITE_SONG_ID ?? '' }}"
+          "@
+          Set-Content -Path .env -Value $envContent
       # 安装项目依赖
       - name: Install Dependencies
         run: npm install
@@ -43,3 +62,24 @@ jobs:
         with:
           name: Home
           path: dist
+      # 上传到服务器并解压
+      - name: Deploy to Server
+        run: |
+          $serverPath = "${{ secrets.SERVER_PATH }}"
+          $serverUser = "${{ secrets.SERVER_USER }}"
+          $serverHost = "${{ secrets.SERVER_HOST }}"
+          $serverKey = "${{ secrets.SERVER_KEY }}"
+          $serverPort = "${{ secrets.SERVER_PORT }}"
+          $artifactPath = "Home.zip"
+
+          # 清空目标目录
+          ssh -i $serverKey -p $serverPort $serverUser@$serverHost "rm -rf $serverPath/*"
+
+          # 上传文件
+          scp -i $serverKey -P $serverPort $artifactPath $serverUser@$serverHost:$serverPath
+
+          # 解压文件
+          ssh -i $serverKey -p $serverPort $serverUser@$serverHost "unzip -o $serverPath/$artifactPath -d $serverPath"
+
+          # 重载 Nginx
+          ssh -i $serverKey -p $serverPort $serverUser@$serverHost "sudo systemctl reload nginx"
