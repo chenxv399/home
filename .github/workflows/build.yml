@@ -73,13 +73,13 @@ jobs:
           $artifactPath = "Home.zip"
 
           # 清空目标目录
-          ssh -i $serverKey -p $serverPort $serverUser@$serverHost "rm -rf $serverPath/*"
+          ssh -i $serverKey -p $serverPort ${serverUser}@${serverHost} "rm -rf $serverPath/*"
 
           # 上传文件
-          scp -i $serverKey -P $serverPort $artifactPath $serverUser@$serverHost:$serverPath
+          scp -i $serverKey -P $serverPort $artifactPath ${serverUser}@${serverHost}:$serverPath
 
           # 解压文件
-          ssh -i $serverKey -p $serverPort $serverUser@$serverHost "unzip -o $serverPath/$artifactPath -d $serverPath"
+          ssh -i $serverKey -p $serverPort ${serverUser}@${serverHost} "unzip -o $serverPath/$artifactPath -d $serverPath"
 
           # 重载 Nginx
-          ssh -i $serverKey -p $serverPort $serverUser@$serverHost "sudo systemctl reload nginx"
+          ssh -i $serverKey -p $serverPort ${serverUser}@${serverHost} "sudo systemctl reload nginx"
