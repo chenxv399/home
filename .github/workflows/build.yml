@@ -39,9 +39,8 @@ jobs:
           VITE_DESC_HELLO_OTHER="${{ vars.VITE_DESC_HELLO_OTHER }}"
           VITE_DESC_TEXT_OTHER="${{ vars.VITE_DESC_TEXT_OTHER }}"
           VITE_WEATHER_KEY="${{ secrets.VITE_WEATHER_KEY }}"
-          VITE_WEATHERAPI_KEY="${{ secrets.VITE_WEATHERAPI_KEY }}"
-          VITE_SITE_START="${{ vars.VITE_SITE_START }}"
-          VITE_SITE_ICP="${{ vars.VITE_SITE_ICP }}"
+          VITE_SITE_START="${{ vars.VITE_SITE_START || '' }}"
+          VITE_SITE_ICP="${{ vars.VITE_SITE_ICP || '' }}"
           VITE_SONG_API="${{ vars.VITE_SONG_API || '' }}"
           VITE_SONG_SERVER="${{ vars.VITE_SONG_SERVER || '' }}"
           VITE_SONG_TYPE="${{ vars.VITE_SONG_TYPE || '' }}"
@@ -62,24 +61,3 @@ jobs:
         with:
           name: Home
           path: dist
-      # 上传到服务器并解压
-      - name: Deploy to Server
-        run: |
-          $serverPath = "${{ secrets.SERVER_PATH }}"
-          $serverUser = "${{ secrets.SERVER_USER }}"
-          $serverHost = "${{ secrets.SERVER_HOST }}"
-          $serverKey = "${{ secrets.SERVER_KEY }}"
-          $serverPort = "${{ secrets.SERVER_PORT }}"
-          $artifactPath = "Home.zip"
-
-          # 清空目标目录
-          ssh -i $serverKey -p $serverPort ${serverUser}@${serverHost} "rm -rf $serverPath/*"
-
-          # 上传文件
-          scp -i $serverKey -P $serverPort $artifactPath ${serverUser}@${serverHost}:$serverPath
-
-          # 解压文件
-          ssh -i $serverKey -p $serverPort ${serverUser}@${serverHost} "unzip -o $serverPath/$artifactPath -d $serverPath"
-
-          # 重载 Nginx
-          ssh -i $serverKey -p $serverPort ${serverUser}@${serverHost} "sudo systemctl reload nginx"

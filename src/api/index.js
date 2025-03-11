@@ -53,26 +53,23 @@ export const getHitokoto = async () => {
  * 天气
  */
 
-// 获取高德地理天气信息
-export const getWeather = async (key, city) => {
+// 获取ip-api.com地理信息
+export const getIpInfofromIpapi = async () => {
   const res = await fetch(
-    `https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`,
+    `http://ip-api.com/json/?lang=zh-CN`,
   );
   return await res.json();
-};
+}
 
-// 获取高德逆地理编码
-export const getAdcodefromAmap = async (key, jingdu, weidu) => {
+//获取qweather天气信息
+export const getWeatherfromQweather = async (key, longitude, latitude) => {
   const res = await fetch(
-    `https://restapi.amap.com/v3/geocode/regeo?key=${key}&location=${jingdu},${weidu}`,
-  );
-  return await res.json();
-};
-
-// 获取weatherapi.com天气和地理信息
-export const getWeatherfromWeatherapi = async (key) => {
-  const res = await fetch(
-    `http://api.weatherapi.com/v1/current.json?key=${key}&q=auto:ip`,
+    `https://devapi.qweather.com/v7/weather/now?location=${longitude},${latitude}`,
+    {
+      headers: {
+        'X-QW-Api-Key': key
+      }
+    }
   );
   return await res.json();
 }

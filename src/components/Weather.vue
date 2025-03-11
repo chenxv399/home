@@ -1,6 +1,6 @@
 <template>
-  <div class="weather" v-if="weatherData.adCode.city && weatherData.weather.weather">
-    <span>{{ weatherData.adCode.city }}&nbsp;</span>
+  <div class="weather" v-if="weatherData.ipinfo.city && weatherData.weather.weather">
+    <span>{{ weatherData.ipinfo.city }}&nbsp;</span>
     <span>{{ weatherData.weather.weather }}&nbsp;</span>
     <span>{{ weatherData.weather.temperature }}℃</span>
     <span class="sm-hidden">
@@ -14,18 +14,18 @@
 </template>
 
 <script setup>
-import { getWeather, getWeatherfromWeatherapi, getAdcodefromAmap } from "@/api";
+import { getIpInfofromIpapi, getWeatherfromQweather } from "@/api";
 import { Error } from "@icon-park/vue-next";
 
-// 高德开发者 Key
+// 和风天气开发者 Key
 const mainKey = import.meta.env.VITE_WEATHER_KEY;
-const WeatherapiKey = import.meta.env.VITE_WEATHERAPI_KEY;
 
 // 天气数据
 const weatherData = reactive({
-  adCode: {
+  ipinfo: {
     city: null, // 城市
-    adcode: null, // 城市编码
+    longitude: null, // 经度
+    latitude: null, // 纬度
   },
   weather: {
     weather: null, // 天气现象
@@ -38,47 +38,36 @@ const weatherData = reactive({
 // 获取天气数据
 const getWeatherData = async () => {
   try {
-    // 使用weatherapi获取天气和地理信息
-    const WeatherapiResult = await getWeatherfromWeatherapi(WeatherapiKey);
-    if (WeatherapiResult.location.country == "China"){
-      //使用高德逆地理编码获取Adcode
-      const jingdu = WeatherapiResult.location.lon;
-      const weidu = WeatherapiResult.location.lat;
-      const adCode = await getAdcodefromAmap(mainkey,jingdu,weidu);
-      console.log(adCode);
-      if (adCode.infocode !== "10000") {
-        throw "地区查询失败";
-      }
-      weatherData.adCode = {
-        city: adCode.regeocode.addressComponent.city,
-        adcode: adCode.regeocode.addressComponent.adcode,
-      };
-      // 获取高德天气信息
-      const result = await getWeather(mainKey, weatherData.adCode.adcode);
-      weatherData.weather = {
-        weather: result.lives[0].weather,
-        temperature: result.lives[0].temperature,
-        winddirection: result.lives[0].winddirection?.endsWith("风")
-          ? result.lives[0].winddirection
-          : result.lives[0].winddirection + "风",
-        windpower: result.lives[0].windpower + "级",
-      }; 
-    }else{
-      weatherData.adCode = {
-        city: WeatherapiResult.location.name,
-        adcode: null,
-      };
-
-      weatherData.weather = {
-        weather: WeatherapiResult.current.condition.text,
-        temperature: WeatherapiResult.current.temp_c,
-        winddirection: WeatherapiResult.current.wind_dir,
-        windpower: WeatherapiResult.current.wind_kph + "km/h",
-      };
+    // 从 ip-api.com 获取用户 IP 的位置信息
+    const ipInfo = await getIpInfofromIpapi();
+    if (!ipInfo || ipInfo.status !== "success") {
+      throw "IP定位失败";
     }
+
+    // 更新 ipinfo 数据
+    weatherData.ipinfo.city = ipInfo.city;
+    weatherData.ipinfo.longitude = ipInfo.lon;
+    weatherData.ipinfo.latitude = ipInfo.lat;
+
+    // 从 qweather 获取天气信息
+    const lon = parseFloat(ipInfo.lon).toFixed(2);
+    const lat = parseFloat(ipInfo.lat).toFixed(2);
+    const weatherResult = await getWeatherfromQweather(mainKey, lon, lat);
+    if (!weatherResult || weatherResult.code !== "200") {
+      throw "天气信息获取失败";
+    }
+
+    // 更新 weather 数据
+    const now = weatherResult.now;
+    weatherData.weather = {
+      weather: now.text,
+      temperature: now.temp,
+      winddirection: now.windDir,
+      windpower: now.windScale + "级",
+    };
   } catch (error) {
-    console.error("天气信息获取失败:" + error);
-    onError("天气信息获取失败");
+    console.error("天气信息加载失败:" + error);
+    onError("天气信息加载失败");
   }
 };
 
