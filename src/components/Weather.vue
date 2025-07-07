@@ -26,7 +26,7 @@
 
 <script setup>
 import { getWeatherinfo } from "@/api";
-import { Error } from "@icon-park/vue-next";
+import { Error as ErrorIcon } from "@icon-park/vue-next";
 import { ref, reactive, onMounted, nextTick, watch } from "vue";
 
 // 天气 Key
@@ -58,8 +58,8 @@ const getWeatherData = async () => {
   try {
     // 获取天气信息
     const weatherResult = await getWeatherinfo(mainKey);
-    if (!weatherResult.ok) {
-      throw new Error(weatherResult.error);
+    if (weatherResult.error) {
+      throw new Error(`天气API错误: ${weatherResult.error}`);
     }
 
     // 更新天气数据
@@ -79,7 +79,7 @@ const getWeatherData = async () => {
 const onError = (message) => {
   ElMessage({
     message,
-    icon: h(Error, {
+    icon: h(ErrorIcon, {
       theme: "filled",
       fill: "#efefef",
     }),
