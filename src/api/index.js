@@ -53,21 +53,13 @@ export const getHitokoto = async () => {
  * 天气
  */
 
-// 获取ip-api.com地理信息
-export const getIpInfofromIpapi = async () => {
+// 获取天气数据
+export const getWeatherinfo = async (key) => {
   const res = await fetch(
-    `http://ip-api.com/json/?lang=zh-CN`,
-  );
-  return await res.json();
-}
-
-//获取qweather天气信息
-export const getWeatherfromQweather = async (key, longitude, latitude) => {
-  const res = await fetch(
-    `https://devapi.qweather.com/v7/weather/now?location=${longitude},${latitude}`,
+    `https://weather.api.utopias.site/weather`,
     {
       headers: {
-        'X-QW-Api-Key': key
+        'Authorization': `Bearer ${key}`
       }
     }
   );

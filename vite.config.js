@@ -91,8 +91,10 @@ export default ({ mode }) =>
     css: {
       preprocessorOptions: {
         scss: {
-          charset: false,
-          additionalData: `@import "./src/style/global.scss";`,
+          // fix:修复Sass的@import规则已弃用警告问题
+          api: 'modern',
+          additionalData: `@use "./src/style/global.scss" as *;`,
+          silenceDeprecations: ["legacy-js-api"],
         },
       },
     },
